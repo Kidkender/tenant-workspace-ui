@@ -43,6 +43,32 @@ export interface TaskComment {
   user: Pick<User, 'id' | 'name' | 'email'>
 }
 
+export interface TenantMember {
+  id: string
+  name: string
+  email: string
+}
+
+export interface ActivityLog {
+  id: string
+  action: string
+  entity_type: string
+  entity_id: string
+  user: { id: string; name: string } | null
+  created_at: string
+}
+
+export interface DashboardStats {
+  tasks: {
+    total: number
+    todo: number
+    doing: number
+    completed: number
+  }
+  members: number
+  recent_activity: ActivityLog[]
+}
+
 export interface ApiResponse<T> {
   data: T
   meta: Record<string, unknown>

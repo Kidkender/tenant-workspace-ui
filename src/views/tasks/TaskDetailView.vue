@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useTaskStore } from '@/stores/task'
 import { useCommentStore } from '@/stores/comment'
 import { usePermission } from '@/composables/usePermission'
@@ -15,6 +16,7 @@ const router = useRouter()
 const taskStore = useTaskStore()
 const commentStore = useCommentStore()
 const { can } = usePermission()
+const { t } = useI18n()
 
 const taskId = route.params.id as string
 const showEdit = ref(false)
@@ -40,7 +42,7 @@ async function handleCommentSubmit(content: string) {
 
 function formatDate(date: string | null) {
   if (!date) return '—'
-  return new Date(date).toLocaleDateString('vi-VN')
+  return new Date(date).toLocaleDateString()
 }
 </script>
 
@@ -53,7 +55,7 @@ function formatDate(date: string | null) {
       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
-      Quay lại
+      {{ t('task.back') }}
     </button>
 
     <div v-if="taskStore.loading" class="flex justify-center py-16">
@@ -72,7 +74,7 @@ function formatDate(date: string | null) {
               v-if="can(PERMISSIONS.TASK_UPDATE)"
               @click="showEdit = true"
               class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition"
-              title="Chỉnh sửa"
+              :title="t('tasks.edit')"
             >
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -84,11 +86,11 @@ function formatDate(date: string | null) {
         <p v-if="taskStore.currentTask.description" class="text-sm text-gray-600 leading-relaxed">
           {{ taskStore.currentTask.description }}
         </p>
-        <p v-else class="text-sm text-gray-400 italic">Không có mô tả.</p>
+        <p v-else class="text-sm text-gray-400 italic">{{ t('task.noDescription') }}</p>
 
         <div class="flex items-center gap-6 text-sm text-gray-500 pt-2 border-t border-gray-100">
           <span>
-            Deadline:
+            {{ t('task.deadline') }}:
             <strong class="text-gray-700">{{ formatDate(taskStore.currentTask.due_date) }}</strong>
           </span>
         </div>
@@ -96,7 +98,7 @@ function formatDate(date: string | null) {
 
       <div v-if="can(PERMISSIONS.TASK_VIEW)" class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
         <h2 class="text-base font-semibold text-gray-900">
-          Comments
+          {{ t('task.comments') }}
           <span class="text-gray-400 font-normal text-sm ml-1">({{ commentStore.comments.length }})</span>
         </h2>
 
@@ -112,7 +114,7 @@ function formatDate(date: string | null) {
     </template>
 
     <div v-else class="text-center py-16 text-gray-400 text-sm">
-      Không tìm thấy task.
+      {{ t('task.notFound') }}
     </div>
   </div>
 

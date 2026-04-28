@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useCommentStore } from '@/stores/comment'
 import { usePermission } from '@/composables/usePermission'
@@ -11,6 +12,7 @@ const props = defineProps<{ taskId: string }>()
 const authStore = useAuthStore()
 const commentStore = useCommentStore()
 const { can } = usePermission()
+const { t } = useI18n()
 
 const editingId = ref<string | null>(null)
 const editContent = ref('')
@@ -38,7 +40,7 @@ async function saveEdit(commentId: string) {
 }
 
 async function handleDelete(commentId: string) {
-  if (!confirm('Xoá comment này?')) return
+  if (!confirm(t('comment.confirm.delete'))) return
   await commentStore.deleteComment(props.taskId, commentId)
 }
 
@@ -47,7 +49,7 @@ function isOwner(comment: TaskComment) {
 }
 
 function formatTime(date: string) {
-  return new Date(date).toLocaleString('vi-VN', {
+  return new Date(date).toLocaleString(undefined, {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -64,7 +66,7 @@ function formatTime(date: string) {
     </div>
 
     <p v-else-if="commentStore.comments.length === 0" class="text-sm text-gray-400 italic py-2">
-      Chưa có comment nào.
+      {{ t('comment.placeholder') }}
     </p>
 
     <div v-else class="space-y-3">
@@ -95,13 +97,13 @@ function formatTime(date: string) {
                 :disabled="saving"
                 class="px-3 py-1 text-xs bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg transition"
               >
-                {{ saving ? 'Đang lưu...' : 'Lưu' }}
+                {{ saving ? t('comment.submitting') : t('comment.save') }}
               </button>
               <button
                 @click="cancelEdit"
                 class="px-3 py-1 text-xs text-gray-500 hover:bg-gray-100 rounded-lg transition"
               >
-                Huỷ
+                {{ t('comment.cancel') }}
               </button>
             </div>
           </div>
@@ -114,14 +116,14 @@ function formatTime(date: string) {
               @click="startEdit(comment)"
               class="text-xs text-gray-400 hover:text-blue-600 transition"
             >
-              Sửa
+              {{ t('comment.edit') }}
             </button>
             <button
               v-if="isOwner(comment) || can(PERMISSIONS.COMMENT_DELETE)"
               @click="handleDelete(comment.id)"
               class="text-xs text-gray-400 hover:text-red-600 transition"
             >
-              Xoá
+              {{ t('comment.delete') }}
             </button>
           </div>
         </div>

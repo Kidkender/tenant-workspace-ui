@@ -2,9 +2,12 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
+import { RouterLink } from 'vue-router'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { t } = useI18n()
 const open = ref(false)
 const menuRef = ref<HTMLElement | null>(null)
 
@@ -45,14 +48,24 @@ onUnmounted(() => document.removeEventListener('mousedown', handleClickOutside))
       class="absolute right-0 mt-1.5 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1"
     >
       <div class="px-3 py-2 border-b border-gray-100">
-        <p class="text-xs text-gray-500 truncate">{{ authStore.user?.email }}</p>
+        <p class="text-xs font-medium text-gray-700 truncate">{{ authStore.user?.name }}</p>
+        <p class="text-xs text-gray-400 truncate">{{ authStore.user?.email }}</p>
       </div>
-      <button
-        @click="logout"
-        class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition"
+      <RouterLink
+        :to="{ name: 'profile' }"
+        @click="open = false"
+        class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
       >
-        Đăng xuất
-      </button>
+        {{ t('profile.viewProfile') }}
+      </RouterLink>
+      <div class="border-t border-gray-100 mt-1 pt-1">
+        <button
+          @click="logout"
+          class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition"
+        >
+          {{ t('user.logout') }}
+        </button>
+      </div>
     </div>
   </div>
 </template>

@@ -2,9 +2,12 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
+import LangSwitcher from '@/components/ui/LangSwitcher.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { t } = useI18n()
 
 const name = ref('')
 const email = ref('')
@@ -21,7 +24,7 @@ async function handleSubmit() {
     await authStore.register(name.value, email.value, password.value)
     router.push({ name: 'login' })
   } catch {
-    error.value = 'Đăng ký thất bại. Vui lòng thử lại.'
+    error.value = t('auth.register.error')
   } finally {
     loading.value = false
   }
@@ -30,13 +33,17 @@ async function handleSubmit() {
 
 <template>
   <div class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div class="absolute top-4 right-4">
+      <LangSwitcher />
+    </div>
+
     <div class="w-full max-w-sm bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-      <h1 class="text-2xl font-semibold text-gray-900 mb-1">Đăng ký</h1>
-      <p class="text-sm text-gray-500 mb-6">Tạo tài khoản mới</p>
+      <h1 class="text-2xl font-semibold text-gray-900 mb-1">{{ t('auth.register.title') }}</h1>
+      <p class="text-sm text-gray-500 mb-6">{{ t('auth.register.subtitle') }}</p>
 
       <form @submit.prevent="handleSubmit" class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Họ tên</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('auth.register.name') }}</label>
           <input
             v-model="name"
             type="text"
@@ -47,7 +54,7 @@ async function handleSubmit() {
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('auth.register.email') }}</label>
           <input
             v-model="email"
             type="email"
@@ -59,7 +66,7 @@ async function handleSubmit() {
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('auth.register.password') }}</label>
           <input
             v-model="password"
             type="password"
@@ -77,14 +84,14 @@ async function handleSubmit() {
           :disabled="loading"
           class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm font-medium rounded-lg transition"
         >
-          {{ loading ? 'Đang đăng ký...' : 'Đăng ký' }}
+          {{ loading ? t('auth.register.submitting') : t('auth.register.submit') }}
         </button>
       </form>
 
       <p class="mt-6 text-center text-sm text-gray-500">
-        Đã có tài khoản?
+        {{ t('auth.register.hasAccount') }}
         <RouterLink to="/login" class="text-blue-600 hover:underline font-medium">
-          Đăng nhập
+          {{ t('auth.register.login') }}
         </RouterLink>
       </p>
     </div>

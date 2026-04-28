@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useTenantStore } from '@/stores/tenant'
 import CreateTenantModal from './CreateTenantModal.vue'
 
 const tenantStore = useTenantStore()
+const { t } = useI18n()
 const open = ref(false)
 const showCreate = ref(false)
 const dropdownRef = ref<HTMLElement | null>(null)
@@ -33,7 +35,7 @@ function select(tenantId: string) {
         {{ tenantStore.currentTenant?.name?.charAt(0) ?? '?' }}
       </span>
       <span class="font-medium text-gray-800 truncate">
-        {{ tenantStore.currentTenant?.name ?? 'Chọn workspace' }}
+        {{ tenantStore.currentTenant?.name ?? t('tenant.noTenant') }}
       </span>
       <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -63,7 +65,7 @@ function select(tenantId: string) {
           @click="showCreate = true; open = false"
           class="w-full text-left px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 transition"
         >
-          + Tạo workspace mới
+          + {{ t('tenant.createNew') }}
         </button>
       </div>
     </div>

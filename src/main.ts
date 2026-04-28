@@ -5,6 +5,7 @@ import { createPinia } from 'pinia'
 
 import App from '@/App.vue'
 import router from '@/router'
+import i18n from '@/i18n'
 import { useAuthStore } from '@/stores/auth'
 import { STORAGE_KEYS } from '@/lib/constants'
 
@@ -13,6 +14,7 @@ const pinia = createPinia()
 
 app.use(pinia)
 app.use(router)
+app.use(i18n)
 
 const authStore = useAuthStore()
 if (localStorage.getItem(STORAGE_KEYS.TOKEN)) {

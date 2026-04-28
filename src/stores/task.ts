@@ -6,6 +6,7 @@ import type { Task, TaskStatus, ApiResponse, Paginator } from '@/types'
 interface TaskFilters {
   status: TaskStatus | ''
   assigned_to: string
+  search: string
 }
 
 export const useTaskStore = defineStore('task', () => {
@@ -13,18 +14,23 @@ export const useTaskStore = defineStore('task', () => {
   const currentTask = ref<Task | null>(null)
   const loading = ref(false)
   const total = ref(0)
-  const filters = ref<TaskFilters>({ status: '', assigned_to: '' })
+  const page = ref(1)
+  const lastPage = ref(1)
+  const filters = ref<TaskFilters>({ status: '', assigned_to: '', search: '' })
 
-  async function fetchTasks() {
+  async function fetchTasks(targetPage = 1) {
     loading.value = true
+    page.value = targetPage
     try {
-      const params: Record<string, string> = {}
+      const params: Record<string, string | number> = { page: targetPage }
       if (filters.value.status) params.status = filters.value.status
       if (filters.value.assigned_to) params.assigned_to = filters.value.assigned_to
+      if (filters.value.search) params.search = filters.value.search
 
       const { data } = await http.get<ApiResponse<Paginator<Task>>>('/tasks', { params })
       tasks.value = data.data.data
       total.value = data.data.total
+      lastPage.value = data.data.last_page
     } finally {
       loading.value = false
     }
@@ -47,7 +53,7 @@ export const useTaskStore = defineStore('task', () => {
     due_date?: string
   }) {
     const { data } = await http.post<ApiResponse<Task>>('/tasks', payload)
-    tasks.value.unshift(data.data)
+    tasks.value = [data.data, ...tasks.value]
     return data.data
   }
 
@@ -76,6 +82,8 @@ export const useTaskStore = defineStore('task', () => {
     currentTask,
     loading,
     total,
+    page,
+    lastPage,
     filters,
     fetchTasks,
     fetchTask,

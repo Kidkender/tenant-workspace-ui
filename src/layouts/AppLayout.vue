@@ -3,6 +3,8 @@ import { RouterView } from 'vue-router'
 import Sidebar from '@/components/layout/Sidebar.vue'
 import UserMenu from '@/components/layout/UserMenu.vue'
 import TenantSwitcher from '@/components/tenant/TenantSwitcher.vue'
+import ToastContainer from '@/components/ui/ToastContainer.vue'
+import LangSwitcher from '@/components/ui/LangSwitcher.vue'
 </script>
 
 <template>
@@ -12,7 +14,10 @@ import TenantSwitcher from '@/components/tenant/TenantSwitcher.vue'
     <div class="flex-1 flex flex-col min-w-0">
       <header class="h-14 shrink-0 bg-white border-b border-gray-200 flex items-center justify-between px-6">
         <TenantSwitcher />
-        <UserMenu />
+        <div class="flex items-center gap-2">
+          <LangSwitcher />
+          <UserMenu />
+        </div>
       </header>
 
       <main class="flex-1 overflow-y-auto p-6">
@@ -20,4 +25,6 @@ import TenantSwitcher from '@/components/tenant/TenantSwitcher.vue'
       </main>
     </div>
   </div>
+
+  <ToastContainer />
 </template>

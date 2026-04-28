@@ -23,7 +23,12 @@ const router = createRouter({
       children: [
         {
           path: '',
-          redirect: { name: 'tasks' },
+          redirect: { name: 'dashboard' },
+        },
+        {
+          path: 'dashboard',
+          name: 'dashboard',
+          component: () => import('@/views/DashboardView.vue'),
         },
         {
           path: 'tasks',
@@ -34,6 +39,21 @@ const router = createRouter({
           path: 'tasks/:id',
           name: 'task-detail',
           component: () => import('@/views/tasks/TaskDetailView.vue'),
+        },
+        {
+          path: 'members',
+          name: 'members',
+          component: () => import('@/views/members/MemberListView.vue'),
+        },
+        {
+          path: 'activity',
+          name: 'activity',
+          component: () => import('@/views/activity/ActivityLogView.vue'),
+        },
+        {
+          path: 'profile',
+          name: 'profile',
+          component: () => import('@/views/ProfileView.vue'),
         },
       ],
     },
@@ -46,12 +66,17 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   const token = localStorage.getItem(STORAGE_KEYS.TOKEN)
+  const tenantId = localStorage.getItem(STORAGE_KEYS.TENANT_ID)
 
   if (to.meta.requiresAuth && !token) {
     return { name: 'login' }
   }
 
   if (to.meta.guest && token) {
+    return { name: 'tasks' }
+  }
+
+  if (token && !tenantId && to.name === 'task-detail') {
     return { name: 'tasks' }
   }
 })

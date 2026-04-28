@@ -28,15 +28,11 @@ export const useTenantStore = defineStore('tenant', () => {
     )
     const created = data.data
 
-    authStore.tenants.push({
-      id: created.id,
-      name: created.name,
-      slug: created.slug,
-      role: 'owner',
-      permissions: [],
-    })
-
     switchTenant(created.id)
+
+    // fetchMe để lấy permissions thật từ backend thay vì hardcode
+    await authStore.fetchMe()
+
     return created
   }
 

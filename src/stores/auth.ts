@@ -56,5 +56,26 @@ export const useAuthStore = defineStore('auth', () => {
     return tenants.value.find((t) => t.id === tenantId)?.permissions ?? []
   }
 
-  return { token, user, tenants, isAuthenticated, login, register, logout, fetchMe, getTenantPermissions }
+  async function updateProfile(name: string) {
+    const { data } = await http.put<ApiResponse<User>>('/me', { name })
+    user.value = data.data
+  }
+
+  function addTenant(tenant: TenantMembership) {
+    tenants.value = [...tenants.value, tenant]
+  }
+
+  return {
+    token,
+    user,
+    tenants,
+    isAuthenticated,
+    login,
+    register,
+    logout,
+    fetchMe,
+    updateProfile,
+    getTenantPermissions,
+    addTenant,
+  }
 })
