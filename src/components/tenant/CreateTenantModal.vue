@@ -31,6 +31,7 @@ async function handleSubmit() {
 </script>
 
 <template>
+  <Teleport to="body">
   <div class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4">
     <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-6">
       <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ t('tenant.create') }}</h2>
@@ -68,4 +69,5 @@ async function handleSubmit() {
       </form>
     </div>
   </div>
+  </Teleport>
 </template>

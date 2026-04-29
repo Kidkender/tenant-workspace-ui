@@ -44,6 +44,10 @@ export const useAuthStore = defineStore('auth', () => {
     await http.post('/auth/register', { name, email, password })
   }
 
+  async function resendVerification(email: string) {
+    await http.post('/email/verify/resend', { email })
+  }
+
   function logout() {
     token.value = null
     user.value = null
@@ -72,6 +76,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     login,
     register,
+    resendVerification,
     logout,
     fetchMe,
     updateProfile,

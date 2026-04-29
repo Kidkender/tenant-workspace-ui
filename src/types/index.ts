@@ -82,3 +82,23 @@ export interface Paginator<T> {
   per_page: number
   total: number
 }
+
+export interface Role {
+  id: number
+  name: string
+}
+
+export interface NotificationData {
+  task_id: string
+  task_title: string
+  tenant_id: string
+  message: string
+}
+
+export interface Notification {
+  id: string
+  type: string
+  read_at: string | null
+  created_at: string
+  data: NotificationData
+}

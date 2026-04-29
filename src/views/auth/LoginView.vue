@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
+import axios from 'axios'
 import LangSwitcher from '@/components/ui/LangSwitcher.vue'
 
 const router = useRouter()
@@ -12,18 +13,24 @@ const { t } = useI18n()
 const email = ref('')
 const password = ref('')
 const error = ref('')
+const notVerified = ref(false)
 const loading = ref(false)
 
 async function handleSubmit() {
   if (loading.value) return
   error.value = ''
+  notVerified.value = false
   loading.value = true
 
   try {
     await authStore.login(email.value, password.value)
     router.push({ name: 'dashboard' })
-  } catch {
-    error.value = t('auth.login.error')
+  } catch (e: unknown) {
+    if (axios.isAxiosError(e) && e.response?.status === 403) {
+      notVerified.value = true
+    } else {
+      error.value = t('auth.login.error')
+    }
   } finally {
     loading.value = false
   }
@@ -66,6 +73,16 @@ async function handleSubmit() {
         </div>
 
         <p v-if="error" class="text-sm text-red-600">{{ error }}</p>
+
+        <div v-if="notVerified" class="rounded-lg bg-yellow-50 border border-yellow-200 p-3 text-sm text-yellow-800">
+          <p class="mb-1">{{ t('auth.login.errorNotVerified') }}</p>
+          <RouterLink
+            :to="{ name: 'verify-email', query: { email } }"
+            class="font-medium underline hover:text-yellow-900"
+          >
+            {{ t('auth.login.goVerify') }}
+          </RouterLink>
+        </div>
 
         <button
           type="submit"

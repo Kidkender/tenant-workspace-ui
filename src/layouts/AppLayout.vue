@@ -2,6 +2,7 @@
 import { RouterView } from 'vue-router'
 import Sidebar from '@/components/layout/Sidebar.vue'
 import UserMenu from '@/components/layout/UserMenu.vue'
+import NotificationBell from '@/components/layout/NotificationBell.vue'
 import TenantSwitcher from '@/components/tenant/TenantSwitcher.vue'
 import ToastContainer from '@/components/ui/ToastContainer.vue'
 import LangSwitcher from '@/components/ui/LangSwitcher.vue'
@@ -16,6 +17,7 @@ import LangSwitcher from '@/components/ui/LangSwitcher.vue'
         <TenantSwitcher />
         <div class="flex items-center gap-2">
           <LangSwitcher />
+          <NotificationBell />
           <UserMenu />
         </div>
       </header>

@@ -22,7 +22,7 @@ async function handleSubmit() {
 
   try {
     await authStore.register(name.value, email.value, password.value)
-    router.push({ name: 'login' })
+    router.push({ name: 'verify-email', query: { email: email.value } })
   } catch {
     error.value = t('auth.register.error')
   } finally {
