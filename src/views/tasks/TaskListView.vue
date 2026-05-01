@@ -128,6 +128,16 @@ function formatDate(date: string | null) {
             {{ t(opt.labelKey) }}
           </option>
         </select>
+        <select
+          :value="taskStore.filters.assigned_to"
+          @change="taskStore.setFilter('assigned_to', ($event.target as HTMLSelectElement).value)"
+          class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg outline-none focus:border-blue-500 bg-white text-gray-700"
+        >
+          <option value="">{{ t('tasks.filter.allAssignees') }}</option>
+          <option v-for="m in memberStore.members" :key="m.id" :value="m.id">
+            {{ m.name }}
+          </option>
+        </select>
       </div>
 
       <div v-if="taskStore.loading" class="flex justify-center py-16">

@@ -28,19 +28,13 @@ http.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error.response?.status
+    const hadToken = !!localStorage.getItem(STORAGE_KEYS.TOKEN)
 
-    if (status === 401) {
+    if (status === 401 && hadToken) {
       localStorage.removeItem(STORAGE_KEYS.TOKEN)
       localStorage.removeItem(STORAGE_KEYS.TENANT_ID)
       window.location.href = '/login'
       return Promise.reject(error)
-    }
-
-    if (status === 403) {
-      // Import lazily để tránh circular dependency với pinia
-      import('@/stores/toast').then(({ useToastStore }) => {
-        useToastStore().error('Bạn không có quyền thực hiện hành động này.')
-      })
     }
 
     return Promise.reject(error)

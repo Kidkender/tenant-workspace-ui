@@ -5,6 +5,7 @@ export default {
     members: 'Members',
     activity: 'Activity',
     workspace: 'Workspace',
+    settings: 'Settings',
   },
   auth: {
     login: {
@@ -45,6 +46,13 @@ export default {
       subtitle: 'Your account is ready. You can now sign in.',
       login: 'Sign In',
     },
+    acceptInvite: {
+      accepting: 'Processing invitation...',
+      success: 'You have joined the workspace successfully!',
+      goToDashboard: 'Go to Dashboard',
+      invalidToken: 'This invitation is invalid or has expired.',
+      backToLogin: 'Back to sign in',
+    },
   },
   user: {
     logout: 'Log Out',
@@ -78,6 +86,7 @@ export default {
     empty: 'No tasks yet.',
     filter: {
       all: 'All',
+      allAssignees: 'All assignees',
     },
     confirm: {
       delete: 'Delete task "{title}"?',
@@ -103,6 +112,7 @@ export default {
     noDescription: 'No description.',
     notFound: 'Task not found.',
     deadline: 'Deadline',
+    assignee: 'Assigned To',
     comments: 'Comments',
   },
   createTask: {
@@ -147,14 +157,25 @@ export default {
     inviteSending: 'Sending...',
     inviteSuccess: 'Invitation sent successfully.',
     inviteError: 'Failed to send invitation. Please try again.',
-    roles: {
-      admin: 'Admin',
-      member: 'Member',
-    },
     detailTitle: 'Member Details',
     detailName: 'Full Name',
     detailEmail: 'Email',
+    detailRole: 'Role',
     detailClose: 'Close',
+    changeRole: 'Change Role',
+    saveRole: 'Save',
+    roleUpdated: 'Role updated.',
+    roleError: 'Failed to update role.',
+    remove: 'Remove from workspace',
+    removing: 'Removing...',
+    removed: 'Member removed.',
+    removeError: 'Failed to remove member.',
+    removeConfirm: 'Remove {name} from this workspace?',
+    roles: {
+      owner: 'Owner',
+      admin: 'Admin',
+      member: 'Member',
+    },
   },
   activity: {
     title: 'Activity Log',
@@ -213,6 +234,30 @@ export default {
     switchTenant: 'Switch workspace',
     createNew: 'New workspace',
     createError: 'Failed to create workspace. Please try again.',
+  },
+  settings: {
+    title: 'Workspace Settings',
+    subtitle: 'Manage your workspace information.',
+    general: 'General',
+    workspaceName: 'Workspace Name',
+    slug: 'Slug (URL)',
+    slugNote: 'The slug cannot be changed after creation.',
+    save: 'Save Changes',
+    saving: 'Saving...',
+    success: 'Workspace updated.',
+    error: 'Update failed. Please try again.',
+    ownerOnly: 'Only the workspace owner can edit this information.',
+  },
+  errors: {
+    unknown: 'Something went wrong. Please try again.',
+    'auth.invalid_credentials': 'Invalid email or password.',
+    'auth.email_not_verified': 'Please verify your email before signing in.',
+    'auth.email_taken': 'This email is already registered.',
+    'tenant.not_found': 'Workspace not found.',
+    'tenant.not_provided': 'No workspace selected.',
+    'tenant.not_member': 'You are not a member of this workspace.',
+    'tenant.already_member': 'This user is already a member.',
+    'permission.denied': 'You do not have permission to perform this action.',
   },
   notification: {
     title: 'Notifications',

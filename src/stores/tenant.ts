@@ -36,5 +36,14 @@ export const useTenantStore = defineStore('tenant', () => {
     return created
   }
 
-  return { currentTenantId, currentTenant, tenants, switchTenant, createTenant }
+  async function updateTenant(name: string) {
+    const { data } = await http.put<{ data: { id: string; name: string; slug: string } }>(
+      '/tenants/settings',
+      { name },
+    )
+    await authStore.fetchMe()
+    return data.data
+  }
+
+  return { currentTenantId, currentTenant, tenants, switchTenant, createTenant, updateTenant }
 })

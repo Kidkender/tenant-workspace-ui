@@ -34,5 +34,34 @@ export const useMemberStore = defineStore('member', () => {
     }
   }
 
-  return { members, roles, loading, inviting, fetchMembers, fetchRoles, invite }
+  async function acceptInvite(token: string) {
+    await http.post(`/tenants/accept/${token}`)
+  }
+
+  async function removeMember(userId: string) {
+    await http.delete(`/tenant/members/${userId}`)
+    members.value = members.value.filter((m) => m.id !== userId)
+  }
+
+  async function updateMemberRole(userId: string, roleId: number) {
+    await http.put(`/tenant/members/${userId}/role`, { role_id: roleId })
+    const idx = members.value.findIndex((m) => m.id === userId)
+    if (idx !== -1) {
+      const role = roles.value.find((r) => r.id === roleId)
+      members.value[idx] = { ...members.value[idx], role: role?.name ?? null }
+    }
+  }
+
+  return {
+    members,
+    roles,
+    loading,
+    inviting,
+    fetchMembers,
+    fetchRoles,
+    invite,
+    acceptInvite,
+    removeMember,
+    updateMemberRole,
+  }
 })

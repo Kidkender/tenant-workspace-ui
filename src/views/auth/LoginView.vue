@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
-import axios from 'axios'
+import { useApiError } from '@/composables/useApiError'
 import LangSwitcher from '@/components/ui/LangSwitcher.vue'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 const { t } = useI18n()
+const { getErrorCode } = useApiError()
 
 const email = ref('')
 const password = ref('')
@@ -24,9 +26,10 @@ async function handleSubmit() {
 
   try {
     await authStore.login(email.value, password.value)
-    router.push({ name: 'dashboard' })
+    const redirect = route.query.redirect as string | undefined
+    router.push(redirect ?? { name: 'dashboard' })
   } catch (e: unknown) {
-    if (axios.isAxiosError(e) && e.response?.status === 403) {
+    if (getErrorCode(e) === 'auth.email_not_verified') {
       notVerified.value = true
     } else {
       error.value = t('auth.login.error')

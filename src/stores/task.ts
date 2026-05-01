@@ -59,9 +59,24 @@ export const useTaskStore = defineStore('task', () => {
 
   async function updateTask(
     id: string,
-    payload: { title?: string; description?: string; status?: TaskStatus },
+    payload: {
+      title?: string
+      description?: string
+      status?: TaskStatus
+      due_date?: string | null
+    },
   ) {
     const { data } = await http.put<ApiResponse<Task>>(`/tasks/${id}`, payload)
+    const idx = tasks.value.findIndex((t) => t.id === id)
+    if (idx !== -1) tasks.value[idx] = data.data
+    if (currentTask.value?.id === id) currentTask.value = data.data
+    return data.data
+  }
+
+  async function assignTask(id: string, userId: string | null) {
+    const { data } = await http.post<ApiResponse<Task>>(`/tasks/${id}/assign`, {
+      user_id: userId,
+    })
     const idx = tasks.value.findIndex((t) => t.id === id)
     if (idx !== -1) tasks.value[idx] = data.data
     if (currentTask.value?.id === id) currentTask.value = data.data
@@ -89,6 +104,7 @@ export const useTaskStore = defineStore('task', () => {
     fetchTask,
     createTask,
     updateTask,
+    assignTask,
     deleteTask,
     setFilter,
   }

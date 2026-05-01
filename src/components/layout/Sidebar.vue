@@ -10,6 +10,7 @@ const navItems = [
   { name: 'tasks', key: 'nav.tasks', icon: '📋' },
   { name: 'members', key: 'nav.members', icon: '👥' },
   { name: 'activity', key: 'nav.activity', icon: '🕐' },
+  { name: 'settings', key: 'nav.settings', icon: '⚙️' },
 ]
 </script>
 

@@ -47,6 +47,7 @@ export interface TenantMember {
   id: string
   name: string
   email: string
+  role: string | null
 }
 
 export interface ActivityLog {

@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useTaskStore } from '@/stores/task'
 import { useToastStore } from '@/stores/toast'
-import type { Task, TaskStatus } from '@/types'
+import http from '@/lib/http'
+import type { Task, TaskStatus, ApiResponse, TenantMember } from '@/types'
 
 const props = defineProps<{ task: Task }>()
 const emit = defineEmits<{ close: [] }>()
@@ -13,11 +14,14 @@ const toastStore = useToastStore()
 const { t } = useI18n()
 const loading = ref(false)
 const error = ref('')
+const members = ref<TenantMember[]>([])
 
 const form = ref({
   title: props.task.title,
   description: props.task.description ?? '',
   status: props.task.status as TaskStatus,
+  assigned_to: props.task.assigned_to ?? '',
+  due_date: props.task.due_date ?? '',
 })
 
 const statusOptions: { value: TaskStatus; labelKey: string }[] = [
@@ -25,6 +29,15 @@ const statusOptions: { value: TaskStatus; labelKey: string }[] = [
   { value: 'doing', labelKey: 'dashboard.doing' },
   { value: 'completed', labelKey: 'dashboard.completed' },
 ]
+
+onMounted(async () => {
+  try {
+    const { data } = await http.get<ApiResponse<TenantMember[]>>('/tenant/members')
+    members.value = data.data
+  } catch {
+    // non-critical
+  }
+})
 
 async function handleSubmit() {
   if (loading.value || !form.value.title.trim()) return
@@ -36,7 +49,15 @@ async function handleSubmit() {
       title: form.value.title.trim(),
       description: form.value.description || undefined,
       status: form.value.status,
+      due_date: form.value.due_date || null,
     })
+
+    const newAssignee = form.value.assigned_to || null
+    const oldAssignee = props.task.assigned_to ?? null
+    if (newAssignee !== oldAssignee) {
+      await taskStore.assignTask(props.task.id, newAssignee)
+    }
+
     toastStore.success(t('editTask.success'))
     emit('close')
   } catch {
@@ -85,6 +106,28 @@ async function handleSubmit() {
               {{ t(opt.labelKey) }}
             </option>
           </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('createTask.assignTo') }}</label>
+          <select
+            v-model="form.assigned_to"
+            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition bg-white text-gray-700"
+          >
+            <option value="">{{ t('createTask.noAssign') }}</option>
+            <option v-for="m in members" :key="m.id" :value="m.id">
+              {{ m.name }} ({{ m.email }})
+            </option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('editTask.deadline') }}</label>
+          <input
+            v-model="form.due_date"
+            type="date"
+            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+          />
         </div>
 
         <p v-if="error" class="text-sm text-red-600">{{ error }}</p>

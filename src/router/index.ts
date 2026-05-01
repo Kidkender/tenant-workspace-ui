@@ -29,6 +29,12 @@ const router = createRouter({
       meta: { guest: true },
     },
     {
+      path: '/accept-invite',
+      name: 'accept-invite',
+      component: () => import('@/views/auth/AcceptInviteView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/',
       component: () => import('@/layouts/AppLayout.vue'),
       meta: { requiresAuth: true },
@@ -67,6 +73,11 @@ const router = createRouter({
           name: 'profile',
           component: () => import('@/views/ProfileView.vue'),
         },
+        {
+          path: 'settings',
+          name: 'settings',
+          component: () => import('@/views/settings/TenantSettingsView.vue'),
+        },
       ],
     },
     {
@@ -81,7 +92,7 @@ router.beforeEach((to) => {
   const tenantId = localStorage.getItem(STORAGE_KEYS.TENANT_ID)
 
   if (to.meta.requiresAuth && !token) {
-    return { name: 'login' }
+    return { name: 'login', query: { redirect: to.fullPath } }
   }
 
   if (to.meta.guest && token) {

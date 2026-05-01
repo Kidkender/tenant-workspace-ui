@@ -5,6 +5,7 @@ export default {
     members: 'Thành viên',
     activity: 'Hoạt động',
     workspace: 'Workspace',
+    settings: 'Cài đặt',
   },
   auth: {
     login: {
@@ -45,6 +46,13 @@ export default {
       subtitle: 'Tài khoản đã sẵn sàng. Bạn có thể đăng nhập ngay.',
       login: 'Đăng nhập',
     },
+    acceptInvite: {
+      accepting: 'Đang xử lý lời mời...',
+      success: 'Bạn đã tham gia workspace thành công!',
+      goToDashboard: 'Vào Dashboard',
+      invalidToken: 'Lời mời không hợp lệ hoặc đã hết hạn.',
+      backToLogin: 'Quay lại đăng nhập',
+    },
   },
   user: {
     logout: 'Đăng xuất',
@@ -78,6 +86,7 @@ export default {
     empty: 'Chưa có task nào.',
     filter: {
       all: 'Tất cả',
+      allAssignees: 'Tất cả người được giao',
     },
     confirm: {
       delete: 'Xoá task "{title}"?',
@@ -103,6 +112,7 @@ export default {
     noDescription: 'Không có mô tả.',
     notFound: 'Không tìm thấy task.',
     deadline: 'Deadline',
+    assignee: 'Giao cho',
     comments: 'Comments',
   },
   createTask: {
@@ -147,14 +157,25 @@ export default {
     inviteSending: 'Đang gửi...',
     inviteSuccess: 'Đã gửi lời mời thành công.',
     inviteError: 'Gửi lời mời thất bại. Vui lòng thử lại.',
-    roles: {
-      admin: 'Quản trị viên',
-      member: 'Thành viên',
-    },
     detailTitle: 'Thông tin thành viên',
     detailName: 'Họ tên',
     detailEmail: 'Email',
+    detailRole: 'Vai trò',
     detailClose: 'Đóng',
+    changeRole: 'Đổi vai trò',
+    saveRole: 'Lưu',
+    roleUpdated: 'Đã cập nhật vai trò.',
+    roleError: 'Cập nhật vai trò thất bại.',
+    remove: 'Xoá khỏi workspace',
+    removing: 'Đang xoá...',
+    removed: 'Đã xoá thành viên.',
+    removeError: 'Xoá thành viên thất bại.',
+    removeConfirm: 'Xoá {name} khỏi workspace?',
+    roles: {
+      owner: 'Chủ sở hữu',
+      admin: 'Quản trị viên',
+      member: 'Thành viên',
+    },
   },
   activity: {
     title: 'Nhật ký hoạt động',
@@ -213,6 +234,30 @@ export default {
     switchTenant: 'Chuyển workspace',
     createNew: 'Tạo workspace mới',
     createError: 'Tạo workspace thất bại. Vui lòng thử lại.',
+  },
+  settings: {
+    title: 'Cài đặt Workspace',
+    subtitle: 'Quản lý thông tin workspace của bạn.',
+    general: 'Thông tin chung',
+    workspaceName: 'Tên workspace',
+    slug: 'Slug (URL)',
+    slugNote: 'Slug không thể thay đổi sau khi tạo.',
+    save: 'Lưu thay đổi',
+    saving: 'Đang lưu...',
+    success: 'Đã cập nhật workspace.',
+    error: 'Cập nhật thất bại. Vui lòng thử lại.',
+    ownerOnly: 'Chỉ chủ sở hữu mới có thể chỉnh sửa thông tin workspace.',
+  },
+  errors: {
+    unknown: 'Đã có lỗi xảy ra. Vui lòng thử lại.',
+    'auth.invalid_credentials': 'Email hoặc mật khẩu không đúng.',
+    'auth.email_not_verified': 'Vui lòng xác minh email trước khi đăng nhập.',
+    'auth.email_taken': 'Email này đã được đăng ký.',
+    'tenant.not_found': 'Không tìm thấy workspace.',
+    'tenant.not_provided': 'Chưa chọn workspace.',
+    'tenant.not_member': 'Bạn không phải thành viên của workspace này.',
+    'tenant.already_member': 'Người dùng này đã là thành viên.',
+    'permission.denied': 'Bạn không có quyền thực hiện hành động này.',
   },
   notification: {
     title: 'Thông báo',

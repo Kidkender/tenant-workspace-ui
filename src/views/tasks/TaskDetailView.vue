@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useTaskStore } from '@/stores/task'
 import { useCommentStore } from '@/stores/comment'
+import { useMemberStore } from '@/stores/member'
 import { usePermission } from '@/composables/usePermission'
 import { PERMISSIONS } from '@/lib/constants'
 import StatusBadge from '@/components/task/StatusBadge.vue'
@@ -15,6 +16,7 @@ const route = useRoute()
 const router = useRouter()
 const taskStore = useTaskStore()
 const commentStore = useCommentStore()
+const memberStore = useMemberStore()
 const { can } = usePermission()
 const { t } = useI18n()
 
@@ -22,8 +24,15 @@ const taskId = route.params.id as string
 const showEdit = ref(false)
 const submittingComment = ref(false)
 
+const assigneeName = computed(() => {
+  const id = taskStore.currentTask?.assigned_to
+  if (!id) return null
+  return memberStore.members.find((m) => m.id === id)?.name ?? null
+})
+
 onMounted(async () => {
   await taskStore.fetchTask(taskId)
+  memberStore.fetchMembers()
   if (can(PERMISSIONS.TASK_VIEW)) {
     await commentStore.fetchComments(taskId)
   }
@@ -88,10 +97,20 @@ function formatDate(date: string | null) {
         </p>
         <p v-else class="text-sm text-gray-400 italic">{{ t('task.noDescription') }}</p>
 
-        <div class="flex items-center gap-6 text-sm text-gray-500 pt-2 border-t border-gray-100">
+        <div class="flex flex-wrap items-center gap-6 text-sm text-gray-500 pt-2 border-t border-gray-100">
           <span>
             {{ t('task.deadline') }}:
             <strong class="text-gray-700">{{ formatDate(taskStore.currentTask.due_date) }}</strong>
+          </span>
+          <span>
+            {{ t('task.assignee') }}:
+            <span v-if="assigneeName" class="inline-flex items-center gap-1.5 ml-1">
+              <span class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold flex items-center justify-center uppercase">
+                {{ assigneeName.charAt(0) }}
+              </span>
+              <strong class="text-gray-700">{{ assigneeName }}</strong>
+            </span>
+            <strong v-else class="text-gray-400 ml-1">{{ t('tasks.unassigned') }}</strong>
           </span>
         </div>
       </div>
