@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useTaskStore } from '@/stores/task'
@@ -11,6 +11,10 @@ import StatusBadge from '@/components/task/StatusBadge.vue'
 import EditTaskModal from '@/components/task/EditTaskModal.vue'
 import CommentList from '@/components/comment/CommentList.vue'
 import CommentForm from '@/components/comment/CommentForm.vue'
+import IconBack from '@/components/icons/IconBack.vue'
+import IconEdit from '@/components/icons/IconEdit.vue'
+import { echo } from '@/lib/echo'
+import type { TaskComment } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -20,7 +24,7 @@ const memberStore = useMemberStore()
 const { can } = usePermission()
 const { t } = useI18n()
 
-const taskId = route.params.id as string
+const taskId = computed(() => route.params.id as string)
 const showEdit = ref(false)
 const submittingComment = ref(false)
 
@@ -30,20 +34,37 @@ const assigneeName = computed(() => {
   return memberStore.members.find((m) => m.id === id)?.name ?? null
 })
 
-onMounted(async () => {
-  await taskStore.fetchTask(taskId)
-  memberStore.fetchMembers()
-  if (can(PERMISSIONS.TASK_VIEW)) {
-    await commentStore.fetchComments(taskId)
-  }
-})
+watch(
+  taskId,
+  async (newId, oldId) => {
+    if (oldId) {
+      echo.leave(`tasks.${oldId}`)
+      commentStore.reset()
+    }
 
-onUnmounted(() => commentStore.reset())
+    await taskStore.fetchTask(newId)
+    memberStore.fetchMembers()
+
+    if (can(PERMISSIONS.TASK_VIEW)) {
+      await commentStore.fetchComments(newId)
+    }
+
+    echo.private(`tasks.${newId}`).listen('comment.created', (data: TaskComment) => {
+      commentStore.addComment(data)
+    })
+  },
+  { immediate: true },
+)
+
+onUnmounted(() => {
+  commentStore.reset()
+  echo.leave(`tasks.${taskId.value}`)
+})
 
 async function handleCommentSubmit(content: string) {
   submittingComment.value = true
   try {
-    await commentStore.createComment(taskId, content)
+    await commentStore.createComment(taskId.value, content)
   } finally {
     submittingComment.value = false
   }
@@ -57,13 +78,9 @@ function formatDate(date: string | null) {
 
 <template>
   <div class="max-w-2xl space-y-5">
-    <button
-      @click="router.back()"
-      class="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition"
-    >
-      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-      </svg>
+    <button @click="router.back()"
+      class="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition">
+      <IconBack class="w-4 h-4" />
       {{ t('task.back') }}
     </button>
 
@@ -79,15 +96,10 @@ function formatDate(date: string | null) {
           </h1>
           <div class="flex items-center gap-2 shrink-0">
             <StatusBadge :status="taskStore.currentTask.status" />
-            <button
-              v-if="can(PERMISSIONS.TASK_UPDATE)"
-              @click="showEdit = true"
+            <button v-if="can(PERMISSIONS.TASK_UPDATE)" @click="showEdit = true"
               class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition"
-              :title="t('tasks.edit')"
-            >
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
+              :title="t('tasks.edit')">
+              <IconEdit class="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -105,7 +117,8 @@ function formatDate(date: string | null) {
           <span>
             {{ t('task.assignee') }}:
             <span v-if="assigneeName" class="inline-flex items-center gap-1.5 ml-1">
-              <span class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold flex items-center justify-center uppercase">
+              <span
+                class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold flex items-center justify-center uppercase">
                 {{ assigneeName.charAt(0) }}
               </span>
               <strong class="text-gray-700">{{ assigneeName }}</strong>
@@ -121,12 +134,8 @@ function formatDate(date: string | null) {
           <span class="text-gray-400 font-normal text-sm ml-1">({{ commentStore.comments.length }})</span>
         </h2>
 
-        <CommentForm
-          v-if="can(PERMISSIONS.COMMENT_CREATE)"
-          :task-id="taskId"
-          :loading="submittingComment"
-          @submit="handleCommentSubmit"
-        />
+        <CommentForm v-if="can(PERMISSIONS.COMMENT_CREATE)" :task-id="taskId" :loading="submittingComment"
+          @submit="handleCommentSubmit" />
 
         <CommentList :task-id="taskId" />
       </div>
@@ -137,9 +146,5 @@ function formatDate(date: string | null) {
     </div>
   </div>
 
-  <EditTaskModal
-    v-if="showEdit && taskStore.currentTask"
-    :task="taskStore.currentTask"
-    @close="showEdit = false"
-  />
+  <EditTaskModal v-if="showEdit && taskStore.currentTask" :task="taskStore.currentTask" @close="showEdit = false" />
 </template>

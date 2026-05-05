@@ -1,17 +1,26 @@
 <script setup lang="ts">
 import { RouterLink, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import IconDashboard from '@/components/icons/IconDashboard.vue'
+import IconTasks from '@/components/icons/IconTasks.vue'
+import IconMembers from '@/components/icons/IconMembers.vue'
+import IconActivity from '@/components/icons/IconActivity.vue'
+import IconSettings from '@/components/icons/IconSettings.vue'
 
 const route = useRoute()
 const { t } = useI18n()
 
 const navItems = [
-  { name: 'dashboard', key: 'nav.dashboard', icon: '📊' },
-  { name: 'tasks', key: 'nav.tasks', icon: '📋' },
-  { name: 'members', key: 'nav.members', icon: '👥' },
-  { name: 'activity', key: 'nav.activity', icon: '🕐' },
-  { name: 'settings', key: 'nav.settings', icon: '⚙️' },
+  { name: 'dashboard', key: 'nav.dashboard', icon: IconDashboard },
+  { name: 'tasks', key: 'nav.tasks', icon: IconTasks },
+  { name: 'members', key: 'nav.members', icon: IconMembers },
+  { name: 'activity', key: 'nav.activity', icon: IconActivity },
+  { name: 'settings', key: 'nav.settings', icon: IconSettings },
 ]
+
+function isActive(name: string) {
+  return route.name === name || (name === 'tasks' && route.name === 'task-detail')
+}
 </script>
 
 <template>
@@ -20,19 +29,20 @@ const navItems = [
       <span class="text-base font-bold text-gray-900 tracking-tight">{{ t('nav.workspace') }}</span>
     </div>
 
-    <nav class="flex-1 px-3 py-4 space-y-0.5">
+    <nav class="flex-1 px-3 py-4 space-y-0.5" aria-label="Main navigation">
       <RouterLink
         v-for="item in navItems"
         :key="item.name"
         :to="{ name: item.name }"
         class="flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-colors"
         :class="
-          route.name === item.name || (item.name === 'tasks' && route.name === 'task-detail')
+          isActive(item.name)
             ? 'bg-blue-50 text-blue-700 font-medium'
             : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
         "
+        :aria-current="isActive(item.name) ? 'page' : undefined"
       >
-        <span>{{ item.icon }}</span>
+        <component :is="item.icon" class="w-4 h-4 shrink-0" />
         {{ t(item.key) }}
       </RouterLink>
     </nav>

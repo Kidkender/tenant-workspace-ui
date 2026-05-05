@@ -170,6 +170,7 @@ export default {
     removing: 'Removing...',
     removed: 'Member removed.',
     removeError: 'Failed to remove member.',
+    removeConfirmTitle: 'Remove member',
     removeConfirm: 'Remove {name} from this workspace?',
     roles: {
       owner: 'Owner',
@@ -267,5 +268,9 @@ export default {
     minutesAgo: '{n}m ago',
     hoursAgo: '{n}h ago',
     daysAgo: '{n}d ago',
+  },
+  confirm: {
+    ok: 'Confirm',
+    cancel: 'Cancel',
   },
 }

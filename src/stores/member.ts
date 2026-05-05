@@ -45,11 +45,10 @@ export const useMemberStore = defineStore('member', () => {
 
   async function updateMemberRole(userId: string, roleId: number) {
     await http.put(`/tenant/members/${userId}/role`, { role_id: roleId })
-    const idx = members.value.findIndex((m) => m.id === userId)
-    if (idx !== -1) {
-      const role = roles.value.find((r) => r.id === roleId)
-      members.value[idx] = { ...members.value[idx], role: role?.name ?? null }
-    }
+    const role = roles.value.find((r) => r.id === roleId)
+    members.value = members.value.map((m) =>
+      m.id === userId ? { ...m, role: role?.name ?? null } : m,
+    )
   }
 
   return {

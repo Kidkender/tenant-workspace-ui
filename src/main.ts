@@ -9,16 +9,20 @@ import i18n from '@/i18n'
 import { useAuthStore } from '@/stores/auth'
 import { STORAGE_KEYS } from '@/lib/constants'
 
-const app = createApp(App)
-const pinia = createPinia()
+async function bootstrap() {
+  const app = createApp(App)
+  const pinia = createPinia()
 
-app.use(pinia)
-app.use(router)
-app.use(i18n)
+  app.use(pinia)
+  app.use(router)
+  app.use(i18n)
 
-const authStore = useAuthStore()
-if (localStorage.getItem(STORAGE_KEYS.TOKEN)) {
-  authStore.fetchMe().catch(() => authStore.logout())
+  const authStore = useAuthStore()
+  if (localStorage.getItem(STORAGE_KEYS.TOKEN)) {
+    await authStore.fetchMe().catch(() => authStore.logout())
+  }
+
+  app.mount('#app')
 }
 
-app.mount('#app')
+bootstrap()

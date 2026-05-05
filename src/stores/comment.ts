@@ -24,13 +24,18 @@ export const useCommentStore = defineStore('comment', () => {
     comments.value.unshift(data.data)
   }
 
+  async function addComment(comment: TaskComment) {
+    if (!comments.value.find((c) => c.id === comment.id)) {
+      comments.value.unshift(comment)
+    }
+  }
+
   async function updateComment(taskId: string, commentId: string, content: string) {
     const { data } = await http.put<ApiResponse<TaskComment>>(
       `/tasks/${taskId}/comments/${commentId}`,
       { content },
     )
-    const idx = comments.value.findIndex((c) => c.id === commentId)
-    if (idx !== -1) comments.value[idx] = data.data
+    comments.value = comments.value.map((c) => (c.id === commentId ? data.data : c))
   }
 
   async function deleteComment(taskId: string, commentId: string) {
@@ -42,5 +47,14 @@ export const useCommentStore = defineStore('comment', () => {
     comments.value = []
   }
 
-  return { comments, loading, fetchComments, createComment, updateComment, deleteComment, reset }
+  return {
+    comments,
+    loading,
+    fetchComments,
+    createComment,
+    updateComment,
+    deleteComment,
+    reset,
+    addComment,
+  }
 })

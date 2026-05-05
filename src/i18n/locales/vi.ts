@@ -170,6 +170,7 @@ export default {
     removing: 'Đang xoá...',
     removed: 'Đã xoá thành viên.',
     removeError: 'Xoá thành viên thất bại.',
+    removeConfirmTitle: 'Xoá thành viên',
     removeConfirm: 'Xoá {name} khỏi workspace?',
     roles: {
       owner: 'Chủ sở hữu',
@@ -267,5 +268,9 @@ export default {
     minutesAgo: '{n} phút trước',
     hoursAgo: '{n} giờ trước',
     daysAgo: '{n} ngày trước',
+  },
+  confirm: {
+    ok: 'Xác nhận',
+    cancel: 'Huỷ',
   },
 }

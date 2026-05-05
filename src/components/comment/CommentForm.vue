@@ -27,7 +27,7 @@ function handleSubmit() {
     />
     <button
       type="submit"
-      :disabled="loading || !content.trim()"
+      :disabled="loading"
       class="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white rounded-lg transition shrink-0"
     >
       {{ loading ? '...' : t('comment.submit') }}

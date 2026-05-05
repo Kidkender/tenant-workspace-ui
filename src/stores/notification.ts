@@ -14,8 +14,8 @@ export const useNotificationStore = defineStore('notification', () => {
     try {
       const { data } = await http.get<ApiResponse<Notification[]>>('/notifications/unread')
       unreadNotifications.value = data.data
-    } catch {
-      // silent — polling should not surface errors to UI
+    } catch (err) {
+      console.error('Failed to fetch notifications:', err)
     }
   }
 

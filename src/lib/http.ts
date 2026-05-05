@@ -33,7 +33,9 @@ http.interceptors.response.use(
     if (status === 401 && hadToken) {
       localStorage.removeItem(STORAGE_KEYS.TOKEN)
       localStorage.removeItem(STORAGE_KEYS.TENANT_ID)
-      window.location.href = '/login'
+      import('@/router').then(({ default: router }) => {
+        router.push({ name: 'login', query: { redirect: window.location.pathname } })
+      })
       return Promise.reject(error)
     }
 

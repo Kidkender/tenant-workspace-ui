@@ -67,8 +67,7 @@ export const useTaskStore = defineStore('task', () => {
     },
   ) {
     const { data } = await http.put<ApiResponse<Task>>(`/tasks/${id}`, payload)
-    const idx = tasks.value.findIndex((t) => t.id === id)
-    if (idx !== -1) tasks.value[idx] = data.data
+    tasks.value = tasks.value.map((t) => (t.id === id ? data.data : t))
     if (currentTask.value?.id === id) currentTask.value = data.data
     return data.data
   }
@@ -77,8 +76,7 @@ export const useTaskStore = defineStore('task', () => {
     const { data } = await http.post<ApiResponse<Task>>(`/tasks/${id}/assign`, {
       user_id: userId,
     })
-    const idx = tasks.value.findIndex((t) => t.id === id)
-    if (idx !== -1) tasks.value[idx] = data.data
+    tasks.value = tasks.value.map((t) => (t.id === id ? data.data : t))
     if (currentTask.value?.id === id) currentTask.value = data.data
     return data.data
   }

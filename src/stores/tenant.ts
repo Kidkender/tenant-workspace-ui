@@ -30,7 +30,6 @@ export const useTenantStore = defineStore('tenant', () => {
 
     switchTenant(created.id)
 
-    // fetchMe để lấy permissions thật từ backend thay vì hardcode
     await authStore.fetchMe()
 
     return created

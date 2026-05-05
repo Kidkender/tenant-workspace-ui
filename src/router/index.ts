@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { STORAGE_KEYS } from '@/lib/constants'
+import { useAuthStore } from '@/stores/auth'
+import { useTenantStore } from '@/stores/tenant'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -88,18 +89,21 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  const token = localStorage.getItem(STORAGE_KEYS.TOKEN)
-  const tenantId = localStorage.getItem(STORAGE_KEYS.TENANT_ID)
+  const authStore = useAuthStore()
+  const tenantStore = useTenantStore()
 
-  if (to.meta.requiresAuth && !token) {
+  const isAuthenticated = authStore.isAuthenticated
+  const hasTenant = !!tenantStore.currentTenantId
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
     return { name: 'login', query: { redirect: to.fullPath } }
   }
 
-  if (to.meta.guest && token) {
+  if (to.meta.guest && isAuthenticated) {
     return { name: 'tasks' }
   }
 
-  if (token && !tenantId && to.name === 'task-detail') {
+  if (isAuthenticated && !hasTenant && to.name === 'task-detail') {
     return { name: 'tasks' }
   }
 })

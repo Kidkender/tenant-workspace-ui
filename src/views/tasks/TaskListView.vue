@@ -7,10 +7,15 @@ import { useMemberStore } from '@/stores/member'
 import { usePermission } from '@/composables/usePermission'
 import { useTenantStore } from '@/stores/tenant'
 import { useToastStore } from '@/stores/toast'
+import { useDebounce } from '@/composables/useDebounce'
+import { useConfirm } from '@/composables/useConfirm'
 import { PERMISSIONS } from '@/lib/constants'
 import StatusBadge from '@/components/task/StatusBadge.vue'
 import CreateTaskModal from '@/components/task/CreateTaskModal.vue'
 import EditTaskModal from '@/components/task/EditTaskModal.vue'
+import IconEdit from '@/components/icons/IconEdit.vue'
+import IconTrash from '@/components/icons/IconTrash.vue'
+import IconPlus from '@/components/icons/IconPlus.vue'
 import type { Task, TaskStatus } from '@/types'
 
 const router = useRouter()
@@ -20,11 +25,12 @@ const tenantStore = useTenantStore()
 const toastStore = useToastStore()
 const { can } = usePermission()
 const { t } = useI18n()
+const { confirm } = useConfirm()
 
 const showCreate = ref(false)
 const editingTask = ref<Task | null>(null)
 const searchInput = ref('')
-let searchTimer: ReturnType<typeof setTimeout> | null = null
+const debouncedSearch = useDebounce(searchInput, 350)
 
 const statusOptions: { value: TaskStatus | ''; labelKey: string }[] = [
   { value: '', labelKey: 'tasks.filter.all' },
@@ -59,16 +65,19 @@ watch(
   () => { if (tenantStore.currentTenantId) taskStore.fetchTasks(1) },
 )
 
-function onSearchInput() {
-  if (searchTimer) clearTimeout(searchTimer)
-  searchTimer = setTimeout(() => {
-    taskStore.setFilter('search', searchInput.value)
-    taskStore.fetchTasks(1)
-  }, 350)
-}
+watch(debouncedSearch, (val) => {
+  taskStore.setFilter('search', val)
+  taskStore.fetchTasks(1)
+})
 
 async function handleDelete(task: Task) {
-  if (!confirm(t('tasks.confirm.delete', { title: task.title }))) return
+  const ok = await confirm({
+    title: t('tasks.confirm.deleteTitle'),
+    message: t('tasks.confirm.delete', { title: task.title }),
+    confirmLabel: t('tasks.delete'),
+    danger: true,
+  })
+  if (!ok) return
   await taskStore.deleteTask(task.id)
   toastStore.success(t('tasks.deleted'))
 }
@@ -106,7 +115,7 @@ function formatDate(date: string | null) {
           @click="showCreate = true"
           class="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition"
         >
-          <span class="text-base leading-none">+</span>
+          <IconPlus class="w-4 h-4" />
           {{ t('tasks.create') }}
         </button>
       </div>
@@ -116,7 +125,6 @@ function formatDate(date: string | null) {
           v-model="searchInput"
           type="text"
           :placeholder="t('tasks.search')"
-          @input="onSearchInput"
           class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg outline-none focus:border-blue-500 bg-white text-gray-700 w-56"
         />
         <select
@@ -206,9 +214,7 @@ function formatDate(date: string | null) {
                     class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition"
                     :title="t('tasks.edit')"
                   >
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
+                    <IconEdit class="w-4 h-4" />
                   </button>
                   <button
                     v-if="can(PERMISSIONS.TASK_DELETE)"
@@ -216,9 +222,7 @@ function formatDate(date: string | null) {
                     class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition"
                     :title="t('tasks.delete')"
                   >
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
+                    <IconTrash class="w-4 h-4" />
                   </button>
                 </div>
               </td>
