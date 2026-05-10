@@ -11,9 +11,11 @@ import StatusBadge from '@/components/task/StatusBadge.vue'
 import EditTaskModal from '@/components/task/EditTaskModal.vue'
 import CommentList from '@/components/comment/CommentList.vue'
 import CommentForm from '@/components/comment/CommentForm.vue'
+import TaskAttachments from '@/components/task/TaskAttachments.vue'
 import IconBack from '@/components/icons/IconBack.vue'
 import IconEdit from '@/components/icons/IconEdit.vue'
 import { getEcho } from '@/lib/echo'
+import { useAttachmentStore } from '@/stores/attachment'
 import type { TaskComment } from '@/types'
 
 const route = useRoute()
@@ -21,6 +23,7 @@ const router = useRouter()
 const taskStore = useTaskStore()
 const commentStore = useCommentStore()
 const memberStore = useMemberStore()
+const attachmentStore = useAttachmentStore()
 const { can } = usePermission()
 const { t } = useI18n()
 
@@ -40,11 +43,13 @@ watch(
     if (oldId) {
       getEcho().leave(`tasks.${oldId}`)
       commentStore.reset()
+      attachmentStore.reset()
     }
 
     const fetches: Promise<unknown>[] = [
       taskStore.fetchTask(newId),
       memberStore.fetchMembers(),
+      attachmentStore.fetchAttachments(newId),
     ]
     if (can(PERMISSIONS.TASK_VIEW)) {
       fetches.push(commentStore.fetchComments(newId))
@@ -60,13 +65,19 @@ watch(
 
 onUnmounted(() => {
   commentStore.reset()
+  attachmentStore.reset()
   getEcho().leave(`tasks.${taskId.value}`)
 })
 
-async function handleCommentSubmit(content: string) {
+async function handleCommentSubmit(content: string, files: File[]) {
   submittingComment.value = true
   try {
-    await commentStore.createComment(taskId.value, content)
+    const comment = await commentStore.createComment(taskId.value, content)
+    if (files.length > 0 && comment?.id) {
+      await Promise.allSettled(
+        files.map((file) => attachmentStore.uploadForComment(taskId.value, comment.id, file)),
+      )
+    }
   } finally {
     submittingComment.value = false
   }
@@ -128,6 +139,10 @@ function formatDate(date: string | null) {
             <strong v-else class="text-gray-400 ml-1">{{ t('tasks.unassigned') }}</strong>
           </span>
         </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <TaskAttachments :task-id="taskId" />
       </div>
 
       <div v-if="can(PERMISSIONS.TASK_VIEW)" class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">

@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useNotificationStore } from '@/stores/notification'
+import { useTenantStore } from '@/stores/tenant'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+const router = useRouter()
 const notificationStore = useNotificationStore()
+const tenantStore = useTenantStore()
 
 const open = ref(false)
 const bellRef = ref<HTMLElement | null>(null)
@@ -43,6 +47,23 @@ function toggle() {
 
 async function handleMarkAsRead(id: string) {
   await notificationStore.markAsRead(id)
+}
+
+async function handleNotificationClick(n: { id: string; read_at: string | null; data: Record<string, unknown> }) {
+  if (!n.read_at) notificationStore.markAsRead(n.id)
+
+  const taskId = n.data.task_id as string | undefined
+  const tenantId = n.data.tenant_id as string | undefined
+
+  if (!taskId) return
+
+  open.value = false
+
+  if (tenantId && tenantStore.currentTenantId !== tenantId) {
+    tenantStore.switchTenant(tenantId)
+  }
+
+  router.push({ name: 'task-detail', params: { id: taskId } })
 }
 
 async function handleMarkAllAsRead() {
@@ -142,9 +163,9 @@ onUnmounted(() => {
           <button
             v-for="n in notificationStore.notifications"
             :key="n.id"
-            @click="!n.read_at && handleMarkAsRead(n.id)"
+            @click="handleNotificationClick(n)"
             class="w-full text-left px-4 py-3 hover:bg-gray-50 transition border-b border-gray-50 last:border-0 flex gap-3"
-            :class="{ 'bg-blue-50/60': !n.read_at }"
+            :class="{ 'bg-blue-50/60': !n.read_at, 'cursor-pointer': n.data.task_id, 'cursor-default': !n.data.task_id }"
           >
             <span
               class="mt-1.5 shrink-0 w-2 h-2 rounded-full"

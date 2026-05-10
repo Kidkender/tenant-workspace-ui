@@ -33,6 +33,20 @@ export interface Task {
   updated_at: string
 }
 
+export interface TaskAttachment {
+  id: string
+  task_id: string
+  comment_id: string | null
+  tenant_id: string
+  uploaded_by: string
+  file_name: string
+  file_path: string
+  mime_type: string
+  size: number
+  created_at: string
+  uploader: Pick<User, 'id' | 'name' | 'email'>
+}
+
 export interface TaskComment {
   id: string
   task_id: string

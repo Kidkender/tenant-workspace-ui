@@ -17,11 +17,12 @@ export const useCommentStore = defineStore('comment', () => {
     }
   }
 
-  async function createComment(taskId: string, content: string) {
+  async function createComment(taskId: string, content: string): Promise<TaskComment> {
     const { data } = await http.post<ApiResponse<TaskComment>>(`/tasks/${taskId}/comments`, {
       content,
     })
     comments.value.unshift(data.data)
+    return data.data
   }
 
   async function addComment(comment: TaskComment) {

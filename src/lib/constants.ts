@@ -5,6 +5,8 @@ export const PERMISSIONS = {
   TASK_DELETE: 'task.delete',
   COMMENT_CREATE: 'comment.create',
   COMMENT_DELETE: 'comment.delete',
+  ATTACHMENT_CREATE: 'attachment.create',
+  ATTACHMENT_DELETE: 'attachment.delete',
 } as const
 
 export const STORAGE_KEYS = {
