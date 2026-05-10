@@ -46,6 +46,7 @@ async function handleFiles(files: FileList | null) {
   errorMsg.value = null
 
   const file = files[0]
+  if (!file) return
   if (file.size > MAX_SIZE) {
     errorMsg.value = t('attachment.tooLarge')
     return

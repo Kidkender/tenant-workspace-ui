@@ -49,12 +49,12 @@ function trapFocus(e: KeyboardEvent) {
 
   if (e.key === 'Tab') {
     if (e.shiftKey) {
-      if (document.activeElement === first) {
+      if (document.activeElement === first && last) {
         e.preventDefault()
         last.focus()
       }
     } else {
-      if (document.activeElement === last) {
+      if (document.activeElement === last && first) {
         e.preventDefault()
         first.focus()
       }
@@ -96,28 +96,14 @@ function onBackdropClick() {
 
 <template>
   <Teleport to="body">
-    <Transition
-      enter-active-class="transition duration-150 ease-out"
-      enter-from-class="opacity-0"
-      enter-to-class="opacity-100"
-      leave-active-class="transition duration-100 ease-in"
-      leave-from-class="opacity-100"
-      leave-to-class="opacity-0"
-    >
-      <div
-        v-if="open"
-        class="fixed inset-0 z-50 flex items-center justify-center px-4"
-        role="dialog"
-        aria-modal="true"
-        :aria-labelledby="titleId"
-      >
+    <Transition enter-active-class="transition duration-150 ease-out" enter-from-class="opacity-0"
+      enter-to-class="opacity-100" leave-active-class="transition duration-100 ease-in" leave-from-class="opacity-100"
+      leave-to-class="opacity-0">
+      <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center px-4" role="dialog" aria-modal="true"
+        :aria-labelledby="titleId">
         <div class="absolute inset-0 bg-black/40" @click="onBackdropClick" />
 
-        <div
-          ref="panelRef"
-          class="relative bg-white rounded-xl shadow-xl w-full p-6"
-          :class="sizeClass[size]"
-        >
+        <div ref="panelRef" class="relative bg-white rounded-xl shadow-xl w-full p-6" :class="sizeClass[size]">
           <slot />
         </div>
       </div>

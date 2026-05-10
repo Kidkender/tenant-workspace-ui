@@ -10,19 +10,28 @@ import { useAuthStore } from '@/stores/auth'
 import { STORAGE_KEYS } from '@/lib/constants'
 
 async function bootstrap() {
-  const app = createApp(App)
-  const pinia = createPinia()
+  try {
+    const app = createApp(App)
+    const pinia = createPinia()
 
-  app.use(pinia)
-  app.use(router)
-  app.use(i18n)
+    app.use(pinia)
+    app.use(router)
+    app.use(i18n)
 
-  const authStore = useAuthStore()
-  if (localStorage.getItem(STORAGE_KEYS.TOKEN)) {
-    await authStore.fetchMe().catch(() => authStore.logout())
+    console.log('APP START')
+
+    app.mount('#app')
+
+    console.log('APP MOUNTED')
+
+    const authStore = useAuthStore()
+
+    if (localStorage.getItem(STORAGE_KEYS.TOKEN)) {
+      await authStore.fetchMe().catch(() => authStore.logout())
+    }
+  } catch (e) {
+    console.error('BOOTSTRAP ERROR', e)
   }
-
-  app.mount('#app')
 }
 
 bootstrap()

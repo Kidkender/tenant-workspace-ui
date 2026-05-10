@@ -2,9 +2,17 @@ import Echo from 'laravel-echo'
 import Pusher from 'pusher-js'
 import { STORAGE_KEYS } from '@/lib/constants'
 
-let echoInstance: Echo | null = null
+declare global {
+  interface Window {
+    Pusher: typeof Pusher
+  }
+}
 
-export function getEcho(): Echo {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let echoInstance: Echo<any> | null = null
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getEcho(): Echo<any> {
   if (echoInstance) return echoInstance
 
   window.Pusher = Pusher

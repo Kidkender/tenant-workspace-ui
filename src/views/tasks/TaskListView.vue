@@ -181,7 +181,7 @@ function formatDate(date: string | null) {
               <td class="px-4 py-3 text-gray-500">
                 <div v-if="task.assigned_to && memberMap[task.assigned_to]" class="flex items-center gap-1.5">
                   <span class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold flex items-center justify-center uppercase shrink-0">
-                    {{ memberMap[task.assigned_to].charAt(0) }}
+                    {{ memberMap[task.assigned_to]?.charAt(0) }}
                   </span>
                   <span class="truncate text-xs text-gray-700">{{ memberMap[task.assigned_to] }}</span>
                 </div>

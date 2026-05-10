@@ -26,7 +26,7 @@ const GRADIENT_COLORS = [
 ]
 
 function gradientFor(index: number): string {
-  return GRADIENT_COLORS[index % GRADIENT_COLORS.length]
+  return GRADIENT_COLORS[index % GRADIENT_COLORS.length] ?? GRADIENT_COLORS[0] ?? ''
 }
 
 function enterWorkspace(tenantId: string) {
