@@ -103,3 +103,28 @@ export interface Notification {
   created_at: string
   data: NotificationData
 }
+
+export interface PlanFeature {
+  id: number
+  plan_id: number
+  feature_key: string
+  value: string
+}
+
+export interface Plan {
+  id: number
+  name: string
+  price_monthly: number
+  price_yearly: number
+  features: PlanFeature[]
+}
+
+export interface Subscription {
+  id: number
+  tenant_id: string
+  plan_id: number
+  status: 'active' | 'inactive' | 'expired'
+  start_at: string
+  expired_at: string | null
+  plan?: Plan
+}

@@ -11,6 +11,29 @@ const bellRef = ref<HTMLElement | null>(null)
 
 let pollInterval: ReturnType<typeof setInterval> | null = null
 
+function startPolling() {
+  if (pollInterval) return
+  pollInterval = setInterval(() => {
+    if (!document.hidden) notificationStore.fetchUnread()
+  }, 60_000)
+}
+
+function stopPolling() {
+  if (pollInterval) {
+    clearInterval(pollInterval)
+    pollInterval = null
+  }
+}
+
+function handleVisibilityChange() {
+  if (document.hidden) {
+    stopPolling()
+  } else {
+    notificationStore.fetchUnread()
+    startPolling()
+  }
+}
+
 function toggle() {
   open.value = !open.value
   if (open.value) {
@@ -42,13 +65,15 @@ function formatTime(dateStr: string) {
 
 onMounted(() => {
   notificationStore.fetchUnread()
-  pollInterval = setInterval(() => notificationStore.fetchUnread(), 30_000)
+  startPolling()
   document.addEventListener('mousedown', handleClickOutside)
+  document.addEventListener('visibilitychange', handleVisibilityChange)
 })
 
 onUnmounted(() => {
-  if (pollInterval) clearInterval(pollInterval)
+  stopPolling()
   document.removeEventListener('mousedown', handleClickOutside)
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
 })
 </script>
 

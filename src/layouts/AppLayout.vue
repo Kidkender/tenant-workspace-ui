@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { watch } from 'vue'
 import { RouterView } from 'vue-router'
 import Sidebar from '@/components/layout/Sidebar.vue'
 import UserMenu from '@/components/layout/UserMenu.vue'
@@ -6,6 +7,28 @@ import NotificationBell from '@/components/layout/NotificationBell.vue'
 import TenantSwitcher from '@/components/tenant/TenantSwitcher.vue'
 import ToastContainer from '@/components/ui/ToastContainer.vue'
 import LangSwitcher from '@/components/ui/LangSwitcher.vue'
+import { useTenantStore } from '@/stores/tenant'
+import { useDashboardStore } from '@/stores/dashboard'
+import { useMemberStore } from '@/stores/member'
+import { useBillingStore } from '@/stores/billing'
+import { useNotificationStore } from '@/stores/notification'
+
+const tenantStore = useTenantStore()
+const dashboardStore = useDashboardStore()
+const memberStore = useMemberStore()
+const billingStore = useBillingStore()
+const notificationStore = useNotificationStore()
+
+watch(
+  () => tenantStore.currentTenantId,
+  (id, prevId) => {
+    if (!id || id === prevId) return
+    dashboardStore.invalidate()
+    memberStore.invalidate()
+    billingStore.invalidateSubscription()
+    notificationStore.fetchUnread()
+  },
+)
 </script>
 
 <template>

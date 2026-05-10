@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useMemberStore } from '@/stores/member'
 import { useToastStore } from '@/stores/toast'
+import { useApiError } from '@/composables/useApiError'
 import BaseModal from '@/components/ui/BaseModal.vue'
 import TextInput from '@/components/ui/TextInput.vue'
 import SelectField from '@/components/ui/SelectField.vue'
@@ -12,6 +13,7 @@ const emit = defineEmits<{ close: [] }>()
 const store = useMemberStore()
 const toastStore = useToastStore()
 const { t } = useI18n()
+const { getErrorMessage } = useApiError()
 
 const form = ref({ email: '', role_id: '' })
 const error = ref('')
@@ -28,8 +30,8 @@ async function handleSubmit() {
     await store.invite(form.value.email.trim(), Number(form.value.role_id))
     toastStore.success(t('members.inviteSuccess'))
     emit('close')
-  } catch {
-    error.value = t('members.inviteError')
+  } catch (e: unknown) {
+    error.value = getErrorMessage(e, 'members.inviteError')
   }
 }
 </script>

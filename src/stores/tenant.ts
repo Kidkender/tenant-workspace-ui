@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import http from '@/lib/http'
 import { STORAGE_KEYS } from '@/lib/constants'
 import { useAuthStore } from '@/stores/auth'
@@ -9,6 +9,18 @@ export const useTenantStore = defineStore('tenant', () => {
   const currentTenantId = ref<string | null>(localStorage.getItem(STORAGE_KEYS.TENANT_ID))
 
   const authStore = useAuthStore()
+
+  // Clear currentTenantId when it's no longer in the tenants list (e.g. removed from workspace)
+  watch(
+    () => authStore.tenants,
+    (tenants) => {
+      if (tenants.length === 0) return
+      if (currentTenantId.value && !tenants.find((t) => t.id === currentTenantId.value)) {
+        currentTenantId.value = null
+        localStorage.removeItem(STORAGE_KEYS.TENANT_ID)
+      }
+    },
+  )
 
   const tenants = computed<TenantMembership[]>(() => authStore.tenants)
 

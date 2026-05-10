@@ -1,6 +1,3 @@
-<script setup lang="ts">
-defineProps<{ class?: string }>()
-</script>
 <template>
   <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" v-bind="$attrs">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />

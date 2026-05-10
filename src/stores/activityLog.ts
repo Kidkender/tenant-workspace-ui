@@ -16,9 +16,15 @@ export const useActivityLogStore = defineStore('activityLog', () => {
   const total = ref(0)
   const lastPage = ref(1)
   const page = ref(1)
-  const filters = ref<ActivityLogFilters>({ entity_type: '', entity_id: '', action: '', user_id: '' })
+  const filters = ref<ActivityLogFilters>({
+    entity_type: '',
+    entity_id: '',
+    action: '',
+    user_id: '',
+  })
 
   async function fetchLogs(targetPage = 1) {
+    if (loading.value) return
     loading.value = true
     page.value = targetPage
     try {
@@ -28,7 +34,9 @@ export const useActivityLogStore = defineStore('activityLog', () => {
       if (filters.value.action) params.action = filters.value.action
       if (filters.value.user_id) params.user_id = filters.value.user_id
 
-      const { data } = await http.get<ApiResponse<Paginator<ActivityLog>>>('/activity-logs', { params })
+      const { data } = await http.get<ApiResponse<Paginator<ActivityLog>>>('/activity-logs', {
+        params,
+      })
       logs.value = data.data.data
       total.value = data.data.total
       lastPage.value = data.data.last_page

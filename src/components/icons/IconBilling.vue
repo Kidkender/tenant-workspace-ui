@@ -1,6 +1,6 @@
 <template>
   <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" v-bind="$attrs">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+      d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
   </svg>
 </template>

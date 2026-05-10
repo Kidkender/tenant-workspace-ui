@@ -43,13 +43,6 @@ const memberMap = computed(() =>
   Object.fromEntries(memberStore.members.map((m) => [m.id, m.name])),
 )
 
-onMounted(() => {
-  if (tenantStore.currentTenantId) {
-    taskStore.fetchTasks()
-    memberStore.fetchMembers()
-  }
-})
-
 watch(
   () => tenantStore.currentTenantId,
   (id) => {
@@ -58,6 +51,7 @@ watch(
       memberStore.fetchMembers()
     }
   },
+  { immediate: true },
 )
 
 watch(

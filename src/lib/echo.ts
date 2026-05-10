@@ -1,27 +1,33 @@
-import Echo from "laravel-echo";
-import Pusher from "pusher-js";
+import Echo from 'laravel-echo'
+import Pusher from 'pusher-js'
+import { STORAGE_KEYS } from '@/lib/constants'
 
-const token = localStorage.getItem('token');
-const reverbAppKet = import.meta.env.VITE_REVERB_APP_KEY;
-const wsHost = import.meta.env.VITE_REVERB_WS_HOST;
-const wsPort = import.meta.env.VITE_REVERB_WS_PORT;
-const authEndpoint = import.meta.env.VITE_REVERB_AUTH_ENDPOINT;
+let echoInstance: Echo | null = null
 
+export function getEcho(): Echo {
+  if (echoInstance) return echoInstance
 
-window.Pusher = Pusher;
+  window.Pusher = Pusher
 
-export const echo = new Echo({
-  broadcaster: 'reverb',
-  key: reverbAppKet,
-  wsHost: wsHost,
-  wsPort: wsPort,
-
-  forceTLS: false,
-  enableTransports: ['ws', 'wss'],
-  authEndpoint: `${authEndpoint}/broadcasting/auth`,
-  auth: {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+  echoInstance = new Echo({
+    broadcaster: 'reverb',
+    key: import.meta.env.VITE_REVERB_APP_KEY,
+    wsHost: import.meta.env.VITE_REVERB_WS_HOST,
+    wsPort: import.meta.env.VITE_REVERB_WS_PORT,
+    forceTLS: false,
+    enableTransports: ['ws', 'wss'],
+    authEndpoint: `${import.meta.env.VITE_REVERB_AUTH_ENDPOINT}/broadcasting/auth`,
+    auth: {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem(STORAGE_KEYS.TOKEN)}`,
+      },
     },
-  },
-})
+  })
+
+  return echoInstance
+}
+
+export function destroyEcho(): void {
+  echoInstance?.disconnect()
+  echoInstance = null
+}

@@ -13,7 +13,7 @@ import CommentList from '@/components/comment/CommentList.vue'
 import CommentForm from '@/components/comment/CommentForm.vue'
 import IconBack from '@/components/icons/IconBack.vue'
 import IconEdit from '@/components/icons/IconEdit.vue'
-import { echo } from '@/lib/echo'
+import { getEcho } from '@/lib/echo'
 import type { TaskComment } from '@/types'
 
 const route = useRoute()
@@ -38,18 +38,20 @@ watch(
   taskId,
   async (newId, oldId) => {
     if (oldId) {
-      echo.leave(`tasks.${oldId}`)
+      getEcho().leave(`tasks.${oldId}`)
       commentStore.reset()
     }
 
-    await taskStore.fetchTask(newId)
-    memberStore.fetchMembers()
-
+    const fetches: Promise<unknown>[] = [
+      taskStore.fetchTask(newId),
+      memberStore.fetchMembers(),
+    ]
     if (can(PERMISSIONS.TASK_VIEW)) {
-      await commentStore.fetchComments(newId)
+      fetches.push(commentStore.fetchComments(newId))
     }
+    await Promise.all(fetches)
 
-    echo.private(`tasks.${newId}`).listen('comment.created', (data: TaskComment) => {
+    getEcho().private(`tasks.${newId}`).listen('comment.created', (data: TaskComment) => {
       commentStore.addComment(data)
     })
   },
@@ -58,7 +60,7 @@ watch(
 
 onUnmounted(() => {
   commentStore.reset()
-  echo.leave(`tasks.${taskId.value}`)
+  getEcho().leave(`tasks.${taskId.value}`)
 })
 
 async function handleCommentSubmit(content: string) {

@@ -21,13 +21,10 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = data.data.user
     tenants.value = data.data.tenants
 
-    if (data.data.tenants.length > 0) {
-      const savedTenantId = localStorage.getItem(STORAGE_KEYS.TENANT_ID)
-      const validSaved = data.data.tenants.find((t) => t.id === savedTenantId)
-      const defaultTenant = validSaved ?? data.data.tenants[0]
-      if (defaultTenant) {
-        localStorage.setItem(STORAGE_KEYS.TENANT_ID, defaultTenant.id)
-      }
+    const savedTenantId = localStorage.getItem(STORAGE_KEYS.TENANT_ID)
+    const validSaved = data.data.tenants.find((t) => t.id === savedTenantId)
+    if (!validSaved) {
+      localStorage.removeItem(STORAGE_KEYS.TENANT_ID)
     }
   }
 

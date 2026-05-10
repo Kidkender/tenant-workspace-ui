@@ -6,6 +6,12 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/',
+      name: 'landing',
+      component: () => import('@/views/landing/LandingView.vue'),
+      meta: { public: true },
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import('@/views/auth/LoginView.vue'),
@@ -36,7 +42,13 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: '/',
+      path: '/workspace',
+      name: 'workspace-select',
+      component: () => import('@/views/WorkspaceSelectView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/app',
       component: () => import('@/layouts/AppLayout.vue'),
       meta: { requiresAuth: true },
       children: [
@@ -79,6 +91,11 @@ const router = createRouter({
           name: 'settings',
           component: () => import('@/views/settings/TenantSettingsView.vue'),
         },
+        {
+          path: 'billing',
+          name: 'billing',
+          component: () => import('@/views/billing/BillingView.vue'),
+        },
       ],
     },
     {
@@ -99,12 +116,19 @@ router.beforeEach((to) => {
     return { name: 'login', query: { redirect: to.fullPath } }
   }
 
+  // Authenticated users hitting guest pages go to workspace select or dashboard
   if (to.meta.guest && isAuthenticated) {
-    return { name: 'tasks' }
+    return hasTenant ? { name: 'dashboard' } : { name: 'workspace-select' }
   }
 
-  if (isAuthenticated && !hasTenant && to.name === 'task-detail') {
-    return { name: 'tasks' }
+  // Authenticated users hitting landing go to workspace select or dashboard
+  if (to.name === 'landing' && isAuthenticated) {
+    return hasTenant ? { name: 'dashboard' } : { name: 'workspace-select' }
+  }
+
+  // Authenticated users hitting app routes without a selected workspace
+  if (isAuthenticated && !hasTenant && to.path.startsWith('/app')) {
+    return { name: 'workspace-select' }
   }
 })
 

@@ -9,7 +9,9 @@ export const useMemberStore = defineStore('member', () => {
   const loading = ref(false)
   const inviting = ref(false)
 
-  async function fetchMembers() {
+  async function fetchMembers(force = false) {
+    if (!force && members.value.length > 0) return
+    if (loading.value) return
     loading.value = true
     try {
       const { data } = await http.get<ApiResponse<TenantMember[]>>('/tenant/members')
@@ -17,6 +19,10 @@ export const useMemberStore = defineStore('member', () => {
     } finally {
       loading.value = false
     }
+  }
+
+  function invalidate() {
+    members.value = []
   }
 
   async function fetchRoles() {
@@ -62,5 +68,6 @@ export const useMemberStore = defineStore('member', () => {
     acceptInvite,
     removeMember,
     updateMemberRole,
+    invalidate,
   }
 })
