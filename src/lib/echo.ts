@@ -21,13 +21,15 @@ export function getEcho(): Echo<any> {
     broadcaster: 'reverb',
     key: import.meta.env.VITE_REVERB_APP_KEY,
     wsHost: import.meta.env.VITE_REVERB_WS_HOST,
-    wsPort: import.meta.env.VITE_REVERB_WS_PORT,
+    wsPort: import.meta.env.VITE_REVERB_WS_PORT ?? 8080,
+    wsPath: import.meta.env.PROD ? '/ws' : '',
     forceTLS: false,
-    enableTransports: ['ws', 'wss'],
-    authEndpoint: `${import.meta.env.VITE_REVERB_AUTH_ENDPOINT}/broadcasting/auth`,
+    enableTransports: ['ws'],
+    authEndpoint: import.meta.env.VITE_REVERB_AUTH_ENDPOINT,
     auth: {
       headers: {
         Authorization: `Bearer ${localStorage.getItem(STORAGE_KEYS.TOKEN)}`,
+        'X-Tenant-ID': localStorage.getItem(STORAGE_KEYS.TENANT_ID) ?? '',
       },
     },
   })
