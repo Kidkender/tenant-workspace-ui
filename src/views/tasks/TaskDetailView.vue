@@ -16,7 +16,9 @@ import IconBack from '@/components/icons/IconBack.vue'
 import IconEdit from '@/components/icons/IconEdit.vue'
 import { getEcho } from '@/lib/echo'
 import { useAttachmentStore } from '@/stores/attachment'
-import type { TaskComment } from '@/types'
+import { useLabelStore } from '@/stores/label'
+import TaskLabels from '@/components/task/TaskLabels.vue'
+import type { Label, TaskComment } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -24,12 +26,14 @@ const taskStore = useTaskStore()
 const commentStore = useCommentStore()
 const memberStore = useMemberStore()
 const attachmentStore = useAttachmentStore()
+const labelStore = useLabelStore()
 const { can } = usePermission()
 const { t } = useI18n()
 
 const taskId = computed(() => route.params.id as string)
 const showEdit = ref(false)
 const submittingComment = ref(false)
+const taskLabels = ref<Label[]>([])
 
 const assigneeName = computed(() => {
   const id = taskStore.currentTask?.assigned_to
@@ -50,11 +54,14 @@ watch(
       taskStore.fetchTask(newId),
       memberStore.fetchMembers(),
       attachmentStore.fetchAttachments(newId),
+      labelStore.fetchLabels(),
     ]
     if (can(PERMISSIONS.TASK_VIEW)) {
       fetches.push(commentStore.fetchComments(newId))
     }
     await Promise.all(fetches)
+
+    taskLabels.value = taskStore.currentTask?.labels ?? []
 
     getEcho().private(`tasks.${newId}`).listen('comment.created', (data: TaskComment) => {
       commentStore.addComment(data)
@@ -138,6 +145,14 @@ function formatDate(date: string | null) {
             </span>
             <strong v-else class="text-gray-400 ml-1">{{ t('tasks.unassigned') }}</strong>
           </span>
+        </div>
+
+        <div class="relative pt-2 border-t border-gray-100">
+          <TaskLabels
+            :task-id="taskId"
+            :task-labels="taskLabels"
+            @updated="taskLabels = $event"
+          />
         </div>
       </div>
 

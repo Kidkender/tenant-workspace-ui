@@ -92,6 +92,11 @@ const router = createRouter({
           component: () => import('@/views/settings/TenantSettingsView.vue'),
         },
         {
+          path: 'roles',
+          name: 'roles',
+          component: () => import('@/views/roles/RolesView.vue'),
+        },
+        {
           path: 'billing',
           name: 'billing',
           component: () => import('@/views/billing/BillingView.vue'),

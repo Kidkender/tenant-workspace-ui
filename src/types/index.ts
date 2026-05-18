@@ -20,6 +20,15 @@ export interface AuthResponse {
 
 export type TaskStatus = 'todo' | 'doing' | 'completed'
 
+export interface Label {
+  id: string
+  tenant_id: string
+  name: string
+  color: string
+  created_at: string
+  updated_at: string
+}
+
 export interface Task {
   id: string
   tenant_id: string
@@ -31,6 +40,7 @@ export interface Task {
   due_date: string | null
   created_at: string
   updated_at: string
+  labels?: Label[]
 }
 
 export interface TaskAttachment {
@@ -101,6 +111,20 @@ export interface Paginator<T> {
 export interface Role {
   id: number
   name: string
+}
+
+export interface Permission {
+  id: number
+  key: string
+  description: string | null
+}
+
+export interface CustomRole {
+  id: number
+  name: string
+  description: string | null
+  tenant_id: string | null
+  permissions: Permission[]
 }
 
 export interface NotificationData {
