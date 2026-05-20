@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import http from '@/lib/http'
 import type { Notification, ApiResponse } from '@/types'
+import { getEcho } from '@/lib/echo'
+import { useAuthStore } from '@/stores/auth'
 
 export const useNotificationStore = defineStore('notification', () => {
   const notifications = ref<Notification[]>([])
@@ -44,6 +46,26 @@ export const useNotificationStore = defineStore('notification', () => {
     notifications.value = notifications.value.map((n) => ({ ...n, read_at: now }))
   }
 
+  async function listenForNotifications() {
+    const authStore = useAuthStore()
+
+    const userId = authStore.user?.id
+    if (!userId) return
+
+    getEcho()
+      .private(`App.Models.User.${userId}`)
+      .notification((notification: Notification) => {
+        unreadNotifications.value = [notification, ...unreadNotifications.value]
+      })
+  }
+
+  function stopListeningForNotifications() {
+    const authStore = useAuthStore()
+    const userId = authStore.user?.id
+    if (!userId) return
+
+    getEcho().leave(`App.Models.User.${userId}`)
+  }
   return {
     notifications,
     unreadNotifications,
@@ -53,5 +75,7 @@ export const useNotificationStore = defineStore('notification', () => {
     fetchAll,
     markAsRead,
     markAllAsRead,
+    listenForNotifications,
+    stopListeningForNotifications,
   }
 })

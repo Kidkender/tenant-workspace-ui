@@ -166,3 +166,58 @@ export interface Subscription {
   expired_at: string | null
   plan?: Plan
 }
+
+// Analytics types
+export interface AnalyticsDateRange {
+  from: string
+  to: string
+}
+
+export interface CompletionRateData {
+  from: string
+  to: string
+  total: number
+  completed: number
+  rate: number
+}
+
+export interface TasksPerUserItem {
+  user_id: string
+  name: string
+  total: number
+  todo: number
+  doing: number
+  completed: number
+  completion_rate: number
+}
+
+export interface OverdueRateData {
+  open_total: number
+  overdue: number
+  rate: number
+}
+
+export interface PriorityDistributionData {
+  from: string
+  to: string
+  low: number
+  medium: number
+  high: number
+  urgent: number
+  total: number
+}
+
+export type TrendGranularity = 'day' | 'week'
+export type TrendMetric = 'created' | 'completed' | 'both'
+
+export interface TrendPoint {
+  bucket: string
+  created: number
+  completed: number
+}
+
+export interface TrendData {
+  granularity: TrendGranularity
+  metric: TrendMetric
+  points: TrendPoint[]
+}

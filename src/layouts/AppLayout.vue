@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { watch } from 'vue'
 import { RouterView } from 'vue-router'
 import Sidebar from '@/components/layout/Sidebar.vue'
 import UserMenu from '@/components/layout/UserMenu.vue'
@@ -12,6 +11,7 @@ import { useDashboardStore } from '@/stores/dashboard'
 import { useMemberStore } from '@/stores/member'
 import { useBillingStore } from '@/stores/billing'
 import { useNotificationStore } from '@/stores/notification'
+import { onMounted, onUnmounted, watch } from 'vue'
 
 const tenantStore = useTenantStore()
 const dashboardStore = useDashboardStore()
@@ -29,6 +29,16 @@ watch(
     notificationStore.fetchUnread()
   },
 )
+
+onMounted(() => {
+  notificationStore.listenForNotifications()
+});
+
+onUnmounted(() => {
+  notificationStore.stopListeningForNotifications()
+});
+
+
 </script>
 
 <template>

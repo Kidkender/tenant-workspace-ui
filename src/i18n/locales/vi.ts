@@ -8,6 +8,7 @@ export default {
     settings: 'Cài đặt',
     roles: 'Vai trò',
     billing: 'Gói dịch vụ',
+    analytics: 'Phân tích',
   },
   auth: {
     login: {
@@ -415,6 +416,58 @@ export default {
       taskLimit: 'Tối đa {n} tasks',
       memberLimit: 'Tối đa {n} thành viên',
       canCreateTask: 'Tạo task',
+    },
+  },
+  analytics: {
+    title: 'Phân tích',
+    dateFilter: {
+      from: 'Từ ngày',
+      to: 'Đến ngày',
+      last7: '7 ngày',
+      last30: '30 ngày',
+      last90: '90 ngày',
+    },
+    kpi: {
+      completionRate: 'Tỷ lệ hoàn thành',
+      overdueRate: 'Tỷ lệ quá hạn',
+      tasks: '{completed}/{total} nhiệm vụ',
+      open: '{overdue}/{open_total} đang mở',
+    },
+    trend: {
+      title: 'Xu hướng nhiệm vụ',
+      granularity: {
+        day: 'Theo ngày',
+        week: 'Theo tuần',
+      },
+      metric: {
+        created: 'Tạo mới',
+        completed: 'Hoàn thành',
+        both: 'Cả hai',
+      },
+      created: 'Tạo mới',
+      completed: 'Hoàn thành',
+      noData: 'Không có dữ liệu trong khoảng thời gian này.',
+    },
+    priority: {
+      title: 'Phân bố mức độ ưu tiên',
+      low: 'Thấp',
+      medium: 'Trung bình',
+      high: 'Cao',
+      urgent: 'Khẩn cấp',
+      noData: 'Chưa có nhiệm vụ nào.',
+    },
+    tasksPerUser: {
+      title: 'Nhiệm vụ theo thành viên',
+      noData: 'Chưa có dữ liệu.',
+    },
+    upsell: {
+      title: 'Tính năng Pro',
+      description: 'Nâng cấp lên gói Pro để xem phân tích chi tiết về hiệu suất của nhóm.',
+      cta: 'Nâng cấp ngay',
+    },
+    error: {
+      load: 'Không tải được dữ liệu.',
+      retry: 'Thử lại',
     },
   },
   errors: {

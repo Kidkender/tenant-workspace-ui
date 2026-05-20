@@ -8,6 +8,7 @@ export default {
     settings: 'Settings',
     roles: 'Roles',
     billing: 'Billing',
+    analytics: 'Analytics',
   },
   auth: {
     login: {
@@ -416,6 +417,58 @@ export default {
       taskLimit: 'Up to {n} tasks',
       memberLimit: 'Up to {n} members',
       canCreateTask: 'Task creation',
+    },
+  },
+  analytics: {
+    title: 'Analytics',
+    dateFilter: {
+      from: 'From',
+      to: 'To',
+      last7: '7 days',
+      last30: '30 days',
+      last90: '90 days',
+    },
+    kpi: {
+      completionRate: 'Completion Rate',
+      overdueRate: 'Overdue Rate',
+      tasks: '{completed}/{total} tasks',
+      open: '{overdue}/{open_total} open',
+    },
+    trend: {
+      title: 'Task Trend',
+      granularity: {
+        day: 'By Day',
+        week: 'By Week',
+      },
+      metric: {
+        created: 'Created',
+        completed: 'Completed',
+        both: 'Both',
+      },
+      created: 'Created',
+      completed: 'Completed',
+      noData: 'No data in this period.',
+    },
+    priority: {
+      title: 'Priority Distribution',
+      low: 'Low',
+      medium: 'Medium',
+      high: 'High',
+      urgent: 'Urgent',
+      noData: 'No tasks yet.',
+    },
+    tasksPerUser: {
+      title: 'Tasks per Member',
+      noData: 'No data yet.',
+    },
+    upsell: {
+      title: 'Pro Feature',
+      description: "Upgrade to Pro to see detailed analytics on your team's performance.",
+      cta: 'Upgrade Now',
+    },
+    error: {
+      load: 'Failed to load data.',
+      retry: 'Retry',
     },
   },
   errors: {

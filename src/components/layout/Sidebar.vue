@@ -8,6 +8,7 @@ import IconActivity from '@/components/icons/IconActivity.vue'
 import IconSettings from '@/components/icons/IconSettings.vue'
 import IconBilling from '@/components/icons/IconBilling.vue'
 import IconRoles from '@/components/icons/IconRoles.vue'
+import IconAnalytics from '@/components/icons/IconAnalytics.vue'
 
 const route = useRoute()
 const { t } = useI18n()
@@ -15,6 +16,7 @@ const { t } = useI18n()
 const navItems = [
   { name: 'dashboard', key: 'nav.dashboard', icon: IconDashboard },
   { name: 'tasks', key: 'nav.tasks', icon: IconTasks },
+  { name: 'analytics', key: 'nav.analytics', icon: IconAnalytics },
   { name: 'members', key: 'nav.members', icon: IconMembers },
   { name: 'roles', key: 'nav.roles', icon: IconRoles },
   { name: 'activity', key: 'nav.activity', icon: IconActivity },
